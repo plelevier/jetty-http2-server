@@ -1,5 +1,7 @@
 package com.necoutezpas.resource;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
@@ -9,7 +11,7 @@ import java.io.IOException;
 
 @Path("/sse")
 public class SseResource {
-
+    private static ObjectMapper mapper = new ObjectMapper();
     private static volatile EventOutput eventOutput = new EventOutput();
 
     @GET
@@ -45,17 +47,17 @@ public class SseResource {
             public void run() {
                 try {
                     seq.write(new OutboundEvent.Builder().name("domain-progress")
-                            .data(String.class, "starting domain " + id + " ...").build());
-                    Thread.sleep(1000);
-                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, "50%").build());
-                    Thread.sleep(1000);
-                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, "60%").build());
-                    Thread.sleep(1000);
-                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, "70%").build());
-                    Thread.sleep(1000);
-                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, "99%").build());
-                    Thread.sleep(1000);
-                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, "done").build());
+                            .data(String.class, mapper.writeValueAsString("starting domain " + id + " ...")).build());
+                    Thread.sleep(200);
+                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, mapper.writeValueAsString("50%")).build());
+                    Thread.sleep(200);
+                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, mapper.writeValueAsString("60%")).build());
+                    Thread.sleep(200);
+                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, mapper.writeValueAsString("70%")).build());
+                    Thread.sleep(200);
+                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, mapper.writeValueAsString("99%")).build());
+                    Thread.sleep(200);
+                    seq.write(new OutboundEvent.Builder().name("domain-progress").data(String.class, mapper.writeValueAsString("done")).build());
                     seq.close();
 
                 } catch (final InterruptedException | IOException e) {
