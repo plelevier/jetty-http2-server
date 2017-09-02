@@ -14,10 +14,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Path("/sse")
-public class SseResource {
+public class SseWatchResource {
     private static ExecutorService executorService = Executors.newFixedThreadPool(20);
     private static ConcurrentMap<EventOutput,Boolean> watchers = new ConcurrentHashMap<>();
-    private static Logger logger = LoggerFactory.getLogger(SseResource.class);
+    private static Logger logger = LoggerFactory.getLogger(SseWatchResource.class);
 
     @POST
     @Path("watch")

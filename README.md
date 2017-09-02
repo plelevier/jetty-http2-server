@@ -1,12 +1,14 @@
-jetty-http2-server-example
-==========================
+jetty-http2-server
+==================
 
-Embedded Jetty server, started with a `main()` method, featuring a simple 'Hello, World!' Servlet with HTTP/2.
+Embedded Jetty server with HTTP and HTTP/2, with the following resources :
+- A catch all resource `*` that handle (almost) all the `GET` and `POST requests`;
+- A Server Sent Event (SSE) resource `/sse/watch` that allows streaming of the catch all logs as SSE events
 
 How to Run
 ----------
 
-```java
+```bash
 mvn package
 ```
 
@@ -23,6 +25,15 @@ Test using Web Browser
 ----------------------
 
 Point your browser to [https://localhost:8443](https://localhost:8443)
+
+Test using SSE
+--------------
+
+Run the command below. When you'll make request on the server, you should see the events occur
+
+```bash
+curl -v -X POST http://localhost:8080/sse/watch -H "Content-Type: text/event-stream"
+```
 
 Test using `h2c`
 ----------------

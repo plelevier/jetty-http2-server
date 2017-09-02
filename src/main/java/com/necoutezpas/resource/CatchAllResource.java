@@ -26,7 +26,7 @@ public class CatchAllResource {
                 "path", uriInfo.getPath(),
                 "headers", headers.getRequestHeaders()
         );
-        SseResource.write(new OutboundEvent.Builder()
+        SseWatchResource.write(new OutboundEvent.Builder()
                 .name("log")
                 .data(String.class, objectMapper.writeValueAsString(result))
                 .build());
@@ -47,7 +47,7 @@ public class CatchAllResource {
                 "headers", headers.getRequestHeaders(),
                 "body", body
         );
-        SseResource.write(new OutboundEvent.Builder()
+        SseWatchResource.write(new OutboundEvent.Builder()
                 .name("log")
                 .data(String.class, objectMapper.writeValueAsString(result))
                 .build());
