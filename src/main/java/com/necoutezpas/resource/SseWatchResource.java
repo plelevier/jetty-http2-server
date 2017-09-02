@@ -1,5 +1,7 @@
 package com.necoutezpas.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
@@ -12,6 +14,8 @@ import java.util.concurrent.*;
 
 @Path("/sse")
 public class SseWatchResource {
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
     private static final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(10000);
     private static ExecutorService executorService =  new ThreadPoolExecutor(100, 100,
             0L, TimeUnit.MILLISECONDS,
@@ -28,20 +32,28 @@ public class SseWatchResource {
         return watcher;
     }
 
-    public static void write(OutboundEvent event) {
+    public static void emit(String name, Object object) {
         executorService.submit(() -> {
-            for (EventOutput watcher : watchers.keySet()) {
-                try {
-                    watcher.write(event);
-                } catch (Exception e) {
-                    logger.warn(e.getMessage(), e);
-                    watchers.remove(watcher);
+            try {
+                OutboundEvent event = new OutboundEvent.Builder()
+                        .name(name)
+                        .data(String.class, objectMapper.writeValueAsString(object))
+                        .build();
+                for (EventOutput watcher : watchers.keySet()) {
                     try {
-                        watcher.close();
-                    } catch (IOException e1) {
-                        logger.warn(e1.getMessage(), e);
+                        watcher.write(event);
+                    } catch (Exception e) {
+                        logger.warn(e.getMessage(), e);
+                        watchers.remove(watcher);
+                        try {
+                            watcher.close();
+                        } catch (IOException e1) {
+                            logger.warn(e1.getMessage(), e);
+                        }
                     }
                 }
+            } catch (JsonProcessingException e) {
+                logger.error(e.getMessage(), e);
             }
         });
     }
