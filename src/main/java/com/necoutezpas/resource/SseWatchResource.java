@@ -8,14 +8,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Path("/sse")
 public class SseWatchResource {
-    private static ExecutorService executorService = Executors.newFixedThreadPool(20);
+    private static final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(10000);
+    private static ExecutorService executorService =  new ThreadPoolExecutor(100, 100,
+            0L, TimeUnit.MILLISECONDS,
+            queue);
     private static ConcurrentMap<EventOutput,Boolean> watchers = new ConcurrentHashMap<>();
     private static Logger logger = LoggerFactory.getLogger(SseWatchResource.class);
 
