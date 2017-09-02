@@ -1,31 +1,38 @@
-package de.consol.labs.h2c.examples.server;
+package com.necoutezpas.server;
 
 import org.eclipse.jetty.alpn.ALPN;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.HTTP2Cipher;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
-import org.eclipse.jetty.io.Connection;
-import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.sse.SseFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 import static org.eclipse.jetty.util.resource.Resource.newClassPathResource;
 
-/**
- * Based on the example {@link org.eclipse.jetty.embedded.Http2Server} included in
- * the jetty-project distribution.
- */
 public class Http2Server {
 
     // In order to run this, you need the alpn-boot-XXX.jar in the bootstrap classpath.
     public static void main(String... args) throws Exception {
-        Server server = new Server();
+        Server server = new Server(8080);
 
+        final HandlerList handlers = new HandlerList();
+
+        ResourceConfig config = new ResourceConfig()
+                .register(JacksonFeature.class)
+                .register(SseFeature.class);
+        config.packages("com.necoutezpas.resource");
+        ServletHolder servlet = new ServletHolder(new ServletContainer(config));
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
-        context.addServlet(new ServletHolder(new Servlet()), "/");
-        server.setHandler(context);
+        context.addServlet(servlet, "/*");
+        handlers.addHandler(context);
+        server.setHandler(handlers);
 
         // HTTP Configuration
         HttpConfiguration http_config = new HttpConfiguration();
@@ -59,6 +66,7 @@ public class Http2Server {
         server.addConnector(http2Connector);
 
         ALPN.debug=false;
+
 
         server.start();
         server.join();
