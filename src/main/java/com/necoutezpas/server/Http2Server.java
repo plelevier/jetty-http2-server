@@ -5,7 +5,9 @@ import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.HTTP2Cipher;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -24,6 +26,8 @@ public class Http2Server {
 
         final HandlerList handlers = new HandlerList();
 
+        handlers.addHandler(getResourceContext("/watch", "watch-ui"));
+
         ResourceConfig config = new ResourceConfig()
                 .register(JacksonFeature.class)
                 .register(SseFeature.class);
@@ -32,6 +36,7 @@ public class Http2Server {
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
         context.addServlet(servlet, "/*");
         handlers.addHandler(context);
+
         server.setHandler(handlers);
 
         // HTTP Configuration
@@ -70,5 +75,16 @@ public class Http2Server {
 
         server.start();
         server.join();
+    }
+
+    private static ContextHandler getResourceContext(final String contextPath, final String resourcePAth) throws Exception
+    {
+        final ResourceHandler handler = new ResourceHandler();
+        handler.setResourceBase(Http2Server.class.getClassLoader().getResource(resourcePAth).toURI().toString() );
+        final ContextHandler context = new ContextHandler();
+        context.setContextPath(contextPath);
+        context.setHandler(handler);
+
+        return context;
     }
 }
