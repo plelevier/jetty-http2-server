@@ -24,11 +24,6 @@
 <body>
 <div id="content"></div>
 <script type="text/babel">
-    let source = new EventSource('/sse/watch');
-    source.addEventListener("REQUEST", (event) => {
-        let request = JSON.parse(event.data);
-        console.log(request);
-    });
     /* Request Event REF, note that fields are not always present
     public class Request {
         private final String protocol;
@@ -49,16 +44,17 @@
                 value: 0
             };
         }
-        increment() {
+        increment = (event) => {
+            event.preventDefault();
             this.setState({value: this.state.value + 1})
-        }
+        };
         render() {
             return (<div className="card animated bounceIn my-1">
                 <h5 className="card-header">{this.state.title}</h5>
                 <div className="card-body">
                     <h6 className="card-title">Message #{this.props.data.id}</h6>
                     <p className="card-text">{this.state.message} value : {this.state.value}</p>
-                    <a href="#" className="btn btn-primary" onClick={() => this.increment()}>Increment value</a>
+                    <a href="#" className="btn btn-primary" onClick={this.increment}>Increment value</a>
                 </div>
             </div>)
         }
@@ -66,7 +62,14 @@
     class App extends React.Component {
         constructor() {
             super();
+            let source = new EventSource('/sse/watch');
+            source.addEventListener("REQUEST", (event) => {
+                let request = JSON.parse(event.data);
+                console.log(request);
+                this.addRequest(request);
+            });
             this.state = {
+                source: source,
                 logs: [],
                 index: 0
             };
@@ -81,6 +84,14 @@
         componentDidUpdate() {
             this.scrollToBottom();
         }
+        addRequest = (request) => {
+            let logs = this.state.logs;
+            logs.push({id: this.state.index});
+            this.setState({
+                logs: logs,
+                index: this.state.index + 1
+            });
+        };
         addLog = (event) => {
             event.preventDefault();
             let logs = this.state.logs;
