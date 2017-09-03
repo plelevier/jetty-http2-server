@@ -47,12 +47,28 @@
             this.setState({value: this.state.value + 1})
         };
         render() {
-            return (<div className="card animated bounceIn my-1">
-                <h5 className="card-header">{this.state.title}</h5>
-                <div className="card-body">
-                    <h6 className="card-title">Message #{this.props.data.id}</h6>
-                    <p className="card-text">{this.state.message} value : {this.state.value}</p>
-                    <a href="#" className="btn btn-primary" onClick={this.increment}>Increment value</a>
+            return (<div className="animated bounceIn my-1">
+                <div key={this.props.data.id} className="row">
+                    <div className="col">
+                        <div>Hello</div>
+                    </div>
+                    <div className="col col-md-auto">
+                        <span className="float-right">
+                            <a className="btn btn-primary" data-toggle="collapse" href={'#' + this.props.data.id} aria-expanded="false" aria-controls={this.props.data.id}>
+                                Details
+                            </a>
+                        </span>
+                    </div>
+                </div>
+                <div className="collapse clearfix" id={this.props.data.id}>
+                    <div className="card">
+                        <h5 className="card-header">{this.state.title}</h5>
+                        <div className="card-body">
+                            <h6 className="card-title">Message #{this.props.data.id}</h6>
+                            <p className="card-text">{this.state.message} value : {this.state.value}</p>
+                            <a href="#" className="btn btn-primary" onClick={this.increment}>Increment value</a>
+                        </div>
+                    </div>
                 </div>
             </div>)
         }
