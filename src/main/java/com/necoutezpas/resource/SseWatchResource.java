@@ -23,7 +23,7 @@ public class SseWatchResource {
     private static ConcurrentMap<EventOutput,Boolean> watchers = new ConcurrentHashMap<>();
     private static Logger logger = LoggerFactory.getLogger(SseWatchResource.class);
 
-    @POST
+    @GET
     @Path("watch")
     @Produces(SseFeature.SERVER_SENT_EVENTS)
     public EventOutput watch() {
@@ -43,7 +43,11 @@ public class SseWatchResource {
                     try {
                         watcher.write(event);
                     } catch (Exception e) {
-                        logger.warn(e.getMessage(), e);
+                        if (e instanceof IOException) {
+                            logger.warn(e.getMessage());
+                        } else {
+                            logger.error(e.getMessage(), e);
+                        }
                         watchers.remove(watcher);
                         try {
                             watcher.close();

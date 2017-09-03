@@ -24,6 +24,11 @@
 <body>
 <div id="content"></div>
 <script type="text/babel">
+    let source = new EventSource('/sse/watch');
+    source.addEventListener("REQUEST", (event) => {
+        let request = JSON.parse(event.data);
+        console.log(request);
+    });
     /* Request Event REF, note that fields are not always present
     public class Request {
         private final String protocol;
@@ -68,7 +73,6 @@
         }
         scrollToBottom = () => {
             const node = ReactDOM.findDOMNode(this.messagesEnd);
-            console.log(node);
             node.scrollIntoView({ behavior: 'smooth' });
         };
         componentDidMount() {
@@ -94,30 +98,30 @@
 
             let listItems = logEntries.map(createEntry);
             return (
-                    <div>
-                        <nav className="navbar navbar-expand-md fixed-top bg-light">
-                            <a className="navbar-brand" href="#">Watch</a>
-                            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                                <span className="navbar-toggler-icon"/>
-                            </button>
-                            <div className="collapse navbar-collapse" id="navbarCollapse">
-                                <ul className="navbar-nav mr-auto">
-                                </ul>
-                                <a href="#" className="btn btn-primary" onClick={this.addLog}>Add Log</a>
-                            </div>
-                        </nav>
-                        <div className="container-fluid">
-                            {listItems}
-                            <div style={{ float:"left", clear: "both" }}
-                                 ref={(el) => { this.messagesEnd = el; }}>
-                            </div>
+                <div>
+                    <nav className="navbar navbar-expand-md fixed-top bg-light">
+                        <a className="navbar-brand" href="#">Watch</a>
+                        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"/>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarCollapse">
+                            <ul className="navbar-nav mr-auto">
+                            </ul>
+                            <a href="#" className="btn btn-primary" onClick={this.addLog}>Add Log</a>
+                        </div>
+                    </nav>
+                    <div className="container-fluid">
+                        {listItems}
+                        <div style={{ float:"left", clear: "both" }}
+                             ref={(el) => { this.messagesEnd = el; }}>
                         </div>
                     </div>
+                </div>
             )
         }
     }
     ReactDOM.render(
-            <App/>,
+        <App/>,
         document.getElementById('content')
     );
 </script>

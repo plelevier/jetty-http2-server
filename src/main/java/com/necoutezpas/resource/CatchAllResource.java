@@ -55,6 +55,9 @@ public class CatchAllResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLog(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context HttpServletRequest httpServletRequest)
             throws JsonProcessingException {
+        if ("favicon.ico".equals(uriInfo.getPath())) {
+            return Response.noContent().build();
+        }
         Request request = Request.builder()
                 .protocol(httpServletRequest.getProtocol())
                 .isSecure(httpServletRequest.isSecure())
