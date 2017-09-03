@@ -26,14 +26,22 @@ Test using Web Browser
 
 Point your browser to [https://localhost:8443](https://localhost:8443)
 
-Test using SSE
---------------
+
+Watch logs using a SSE client
+-----------------------------
 
 Run the command below. When you'll make request on the server, you should see the events occur
 
 ```bash
 curl -v -X POST http://localhost:8080/sse/watch -H "Content-Type: text/event-stream"
 ```
+
+
+Watch logs using the UI
+-----------------------
+
+Point your browser to [https://localhost:8080/watch](https://localhost:8080/watch). When you'll make request on the server, you should see the events occur
+
 
 Test using `h2c`
 ----------------

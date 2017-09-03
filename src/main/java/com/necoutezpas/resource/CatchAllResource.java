@@ -2,6 +2,7 @@ package com.necoutezpas.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.necoutezpas.dto.Request;
+import org.joda.time.DateTime;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -18,6 +19,7 @@ public class CatchAllResource {
     public Response headLog(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context HttpServletRequest httpServletRequest, String body)
             throws JsonProcessingException {
         Request request = Request.builder()
+                .timestamp(DateTime.now().getMillis())
                 .protocol(httpServletRequest.getProtocol())
                 .isSecure(httpServletRequest.isSecure())
                 .method(httpServletRequest.getMethod())
@@ -37,6 +39,7 @@ public class CatchAllResource {
     public Response optionsLog(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context HttpServletRequest httpServletRequest, String body)
             throws JsonProcessingException {
         Request request = Request.builder()
+                .timestamp(DateTime.now().getMillis())
                 .protocol(httpServletRequest.getProtocol())
                 .isSecure(httpServletRequest.isSecure())
                 .method(httpServletRequest.getMethod())
@@ -59,6 +62,7 @@ public class CatchAllResource {
             return Response.noContent().build();
         }
         Request request = Request.builder()
+                .timestamp(DateTime.now().getMillis())
                 .protocol(httpServletRequest.getProtocol())
                 .isSecure(httpServletRequest.isSecure())
                 .method(httpServletRequest.getMethod())
@@ -78,6 +82,7 @@ public class CatchAllResource {
                         String body)
             throws JsonProcessingException {
         Request request = Request.builder()
+                .timestamp(DateTime.now().getMillis())
                 .protocol(httpServletRequest.getProtocol())
                 .isSecure(httpServletRequest.isSecure())
                 .method(httpServletRequest.getMethod())
@@ -99,6 +104,7 @@ public class CatchAllResource {
                            String body)
             throws JsonProcessingException {
         Request request = Request.builder()
+                .timestamp(DateTime.now().getMillis())
                 .protocol(httpServletRequest.getProtocol())
                 .isSecure(httpServletRequest.isSecure())
                 .method(httpServletRequest.getMethod())
@@ -119,6 +125,7 @@ public class CatchAllResource {
                             String body)
             throws JsonProcessingException {
         Request request = Request.builder()
+                .timestamp(DateTime.now().getMillis())
                 .protocol(httpServletRequest.getProtocol())
                 .isSecure(httpServletRequest.isSecure())
                 .method(httpServletRequest.getMethod())

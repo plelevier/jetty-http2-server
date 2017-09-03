@@ -14,59 +14,86 @@
     <script src="https://unpkg.com/react@15/dist/react.min.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" integrity="sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=" crossorigin="anonymous"></script>
     <style>
         .navbar {border-bottom: 1px solid lightgrey !important; }
-        .logs {margin-top: 70px; }
+        .requests {margin-top: 60px; }
     </style>
 </head>
 <body>
 <div id="content"></div>
 <script type="text/babel">
-    /* Request Event REF, note that fields are not always present
-    public class Request {
-        private final String protocol;
-        private final boolean isSecure;
-        private final String method;
-        private final String path;
-        private final String query;
-        private final Map<String,List<String>> headers;
-        private final String body;
-    }
-     */
-    class LogEntry extends React.Component {
-        constructor() {
-            super();
+    class HeaderEntry extends React.Component {
+        constructor(props) {
+            super(props);
             this.state = {
-                title: "default title",
-                message: "default message",
-                value: 0
+                k: props.k,
+                v: props.v
+            }
+        }
+        render() {
+            return (<div className="row">
+                <div className="col-3"><small>{this.state.k}:</small></div>
+                <div className="col"><small>{this.state.v}</small></div>
+            </div>);
+        }
+    }
+    class RequestEntry extends React.Component {
+        constructor(props) {
+            super(props);
+            let headers = [];
+            for (let key in props.request.headers) {
+                if (props.request.headers.hasOwnProperty(key)) {
+                    props.request.headers[key].forEach((value) => {
+                        headers.push({key: key, value: value})
+                    });
+                }
+            }
+            this.state = {
+                id: props.request.id,
+                timestamp: props.request.timestamp,
+                datetime: moment(props.request.timestamp).format(),
+                protocol: props.request.protocol,
+                isSecure: props.request.isSecure,
+                method: props.request.method,
+                path: props.request.path,
+                query: props.request.query,
+                fullPath: '/' + props.request.path + ('query' in props.request ? '?' + props.request.query : ''),
+                headers: headers,
+                body: props.request.body
             };
         }
-        increment = (event) => {
-            event.preventDefault();
-            this.setState({value: this.state.value + 1})
-        };
         render() {
-            return (<div className="animated bounceIn my-1">
-                <div key={this.props.data.id} className="row">
+            let headers = this.state.headers;
+            function createHeader(header) {
+                return <HeaderEntry k={header.key} v={header.value}/>
+            }
+            let headersItems = headers.map(createHeader);
+            return (<div key={this.state.id} className="animated fadeInUp my-1">
+                <a className="row" data-toggle="collapse" href={'#' + this.state.id} aria-expanded="false" aria-controls={this.state.id}>
+                    <div className="col col-md-auto">
+                        <span className="badge badge-pill badge-primary m-1">{this.state.id}</span>
+                        <span className="badge badge-secondary m-1">{this.state.protocol}</span>
+                    </div>
                     <div className="col">
-                        <div>Hello</div>
+                        <span className="badge badge-info m-1">{this.state.method}</span>
+                        <samp className="m-1">{this.state.fullPath}</samp>
                     </div>
                     <div className="col col-md-auto">
-                        <span className="float-right">
-                            <a className="btn btn-primary" data-toggle="collapse" href={'#' + this.props.data.id} aria-expanded="false" aria-controls={this.props.data.id}>
-                                Details
-                            </a>
-                        </span>
+                        <span className="badge badge-light float-right m-1">{this.state.datetime}</span>
                     </div>
-                </div>
-                <div className="collapse clearfix" id={this.props.data.id}>
+                </a>
+                <div className="collapse clearfix" id={this.state.id}>
                     <div className="card">
-                        <h5 className="card-header">{this.state.title}</h5>
+                        <div className="card-header">
+                            <h6><small className="text-muted">Request Headers :</small></h6>
+                            {headersItems}
+                        </div>
                         <div className="card-body">
-                            <h6 className="card-title">Message #{this.props.data.id}</h6>
-                            <p className="card-text">{this.state.message} value : {this.state.value}</p>
-                            <a href="#" className="btn btn-primary" onClick={this.increment}>Increment value</a>
+                            <h6><small className="text-muted">Request Body :</small></h6>
+                            <p className="card-text">
+                                <small><code>{this.state.body}</code></small>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -84,7 +111,7 @@
             });
             this.state = {
                 source: source,
-                logs: [],
+                requests: [],
                 index: 0
             };
         }
@@ -99,29 +126,21 @@
             this.scrollToBottom();
         }
         addRequest = (request) => {
-            let logs = this.state.logs;
-            logs.push({id: this.state.index});
+            let requests = this.state.requests;
+            request.id = this.state.index;
+            requests.push(request);
             this.setState({
-                logs: logs,
-                index: this.state.index + 1
-            });
-        };
-        addLog = (event) => {
-            event.preventDefault();
-            let logs = this.state.logs;
-            logs.push({id: this.state.index});
-            this.setState({
-                logs: logs,
+                requests: requests,
                 index: this.state.index + 1
             });
         };
         render() {
-            let logEntries = this.state.logs;
-            function createEntry(entry) {
-                return <LogEntry key={entry.id} data={entry}/>
+            let requests = this.state.requests;
+            function createEntry(request) {
+                return <RequestEntry key={request.id} request={request}/>
             }
 
-            let listItems = logEntries.map(createEntry);
+            let requestsItems = requests.map(createEntry);
             return (
                 <div>
                     <nav className="navbar navbar-expand-md fixed-top bg-light">
@@ -132,11 +151,11 @@
                         <div className="collapse navbar-collapse" id="navbarCollapse">
                             <ul className="navbar-nav mr-auto">
                             </ul>
-                            <a href="#" className="btn btn-primary" onClick={this.addLog}>Add Log</a>
+                            <span className="badge badge-pill badge-primary">{this.state.index}</span>
                         </div>
                     </nav>
-                    <div className="container-fluid logs">
-                        {listItems}
+                    <div className="container-fluid requests">
+                        {requestsItems}
                         <div style={{ float:"left", clear: "both" }}
                              ref={(el) => { this.messagesEnd = el; }}>
                         </div>

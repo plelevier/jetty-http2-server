@@ -13,6 +13,7 @@ import java.util.Map;
 @JsonPOJOBuilder(withPrefix = "")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Request {
+    private final long timestamp;
     private final String protocol;
     private final boolean isSecure;
     private final String method;
