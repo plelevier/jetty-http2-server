@@ -14,8 +14,6 @@ public class CatchAllResource {
 
     @HEAD
     @Path("{seg:.*}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response headLog(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context HttpServletRequest httpServletRequest, String body)
             throws JsonProcessingException {
         Request request = Request.builder()
@@ -34,8 +32,6 @@ public class CatchAllResource {
 
     @OPTIONS
     @Path("{seg:.*}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response optionsLog(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context HttpServletRequest httpServletRequest, String body)
             throws JsonProcessingException {
         Request request = Request.builder()
@@ -54,8 +50,6 @@ public class CatchAllResource {
 
     @GET
     @Path("{seg:.*}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getLog(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context HttpServletRequest httpServletRequest)
             throws JsonProcessingException {
         if ("favicon.ico".equals(uriInfo.getPath())) {
@@ -76,8 +70,6 @@ public class CatchAllResource {
 
     @POST
     @Path("{seg:.*}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response postLog(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context HttpServletRequest httpServletRequest,
                         String body)
             throws JsonProcessingException {
@@ -98,8 +90,6 @@ public class CatchAllResource {
 
     @PUT
     @Path("{seg:.*}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response putLog(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context HttpServletRequest httpServletRequest,
                            String body)
             throws JsonProcessingException {
@@ -119,8 +109,6 @@ public class CatchAllResource {
 
     @DELETE
     @Path("{seg:.*}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteLog(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context HttpServletRequest httpServletRequest,
                             String body)
             throws JsonProcessingException {
