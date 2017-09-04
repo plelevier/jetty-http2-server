@@ -33,7 +33,7 @@ Watch logs using a SSE client
 Run the command below. When you'll make request on the server, you should see the events occur
 
 ```bash
-curl -v -X POST http://localhost:8080/sse/watch -H "Content-Type: text/event-stream"
+curl -v -X GET http://localhost:8080/sse/watch -H "Content-Type: text/event-stream"
 ```
 
 
